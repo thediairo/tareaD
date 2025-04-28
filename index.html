@@ -167,8 +167,9 @@
 <button id="top-button" onclick="window.scrollTo({top:0, behavior:'smooth'})">↑</button>
 
 <!-- Three.js -->
+<script src="https://cdn.jsdelivr.net/npm/three@0.152.0/build/three.min.js"></script>
 <script type="module">
-import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.160.2/build/three.module.js';
+
 
 let scene, camera, renderer;
 
@@ -180,7 +181,7 @@ function initThreeJS() {
   document.getElementById('threejs-background').appendChild(renderer.domElement);
 
   const loader = new THREE.TextureLoader();
-  loader.load('https://upload.wikimedia.org/wikipedia/commons/f/fc/Flag_of_Mexico.svg', function(texture){
+  loader.load('images/m.png', function(texture){
     const geometry = new THREE.PlaneGeometry(20, 12);
     const material = new THREE.MeshBasicMaterial({ map: texture, transparent: true });
     const flag = new THREE.Mesh(geometry, material);
