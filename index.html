@@ -239,28 +239,120 @@ window.addEventListener('resize', () => {
 
 <!-- JavaScript para menú y contenido -->
 <script>
-const sidebar = document.getElementById('sidebar');
-const menuToggle = document.getElementById('menu-toggle');
-const content = document.getElementById('content');
-
-menuToggle.addEventListener('click', () => {
-  sidebar.classList.toggle('hidden');
-});
-
-function mostrar(seccion) {
-  let html = `<h1>${seccion.charAt(0).toUpperCase() + seccion.slice(1)}</h1>`;
-
-  for (let i = 1; i <= 5; i++) {
-    html += `
-    <div class="card">
-      <h3>Artículo ${i}</h3>
-      <p><strong>Resumen:</strong> Breve descripción del artículo ${i} perteneciente a la sección ${seccion}.</p>
-      <p><strong>Detalles:</strong> Este artículo establece principios fundamentales que rigen la organización del ${seccion}. Incluye derechos, obligaciones y procedimientos específicos para su correcta aplicación.</p>
-    </div>`;
-  }
-  content.innerHTML = html;
-}
-</script>
+    const sidebar = document.getElementById('sidebar');
+    const menuToggle = document.getElementById('menu-toggle');
+    const content = document.getElementById('content');
+    
+    menuToggle.addEventListener('click', () => {
+      sidebar.classList.toggle('hidden');
+    });
+    
+    function mostrar(seccion) {
+      let html = `<h1>${seccion.charAt(0).toUpperCase() + seccion.slice(1)}</h1>`;
+      
+      // Artículos reales según sección
+      const datos = {
+        federal: [
+          {
+            numero: 80,
+            resumen: "Sobre la titularidad del Poder Ejecutivo de la Unión.",
+            detalles: "El ejercicio del Supremo Poder Ejecutivo de la Unión se deposita en un solo individuo, que se denominará Presidente de los Estados Unidos Mexicanos."
+          },
+          {
+            numero: 81,
+            resumen: "Sobre la elección del Presidente.",
+            detalles: "La elección del Presidente será directa y en los términos que disponga la ley electoral."
+          },
+          {
+            numero: 82,
+            resumen: "Requisitos para ser Presidente.",
+            detalles: "Se enumeran los requisitos para ser Presidente, como ser ciudadano mexicano por nacimiento, tener al menos 35 años cumplidos, entre otros."
+          },
+          {
+            numero: 83,
+            resumen: "Duración del cargo presidencial.",
+            detalles: "El Presidente entrará a ejercer su encargo el 1º de octubre y durará seis años en el ejercicio de su encargo, sin posibilidad de reelección."
+          },
+          {
+            numero: 84,
+            resumen: "Falta absoluta del Presidente.",
+            detalles: "Se establece el procedimiento en caso de falta absoluta del Presidente de la República, incluyendo la designación de un Presidente Interino o Substituto."
+          }
+        ],
+        estatal: [
+          {
+            numero: 116,
+            resumen: "Sobre la organización de los poderes en los estados.",
+            detalles: "Cada Estado adoptará para su régimen interior la forma de gobierno republicano, representativo, democrático, laico y popular, teniendo como base de su división territorial y de su organización política y administrativa el municipio libre."
+          },
+          {
+            numero: 117,
+            resumen: "Limitaciones a los estados.",
+            detalles: "Se enumeran prohibiciones para los estados, como acuñar moneda, gravar tránsito de personas, entre otras."
+          },
+          {
+            numero: 118,
+            resumen: "Prohibiciones adicionales para los estados.",
+            detalles: "Los estados no pueden celebrar tratados con potencias extranjeras ni otros estados sin autorización del Congreso de la Unión."
+          },
+          {
+            numero: 115,
+            resumen: "Organización de los municipios.",
+            detalles: "Los municipios estarán gobernados por un Ayuntamiento de elección popular directa y tendrán personalidad jurídica propia."
+          },
+          {
+            numero: 122,
+            resumen: "Particularidades de la Ciudad de México.",
+            detalles: "Regula el régimen de gobierno de la Ciudad de México como entidad federativa."
+          }
+        ],
+        municipal: [
+          {
+            numero: 115,
+            resumen: "Gobierno municipal en México.",
+            detalles: "Los municipios estarán gobernados por ayuntamientos de elección popular directa, responsables de la administración pública local."
+          },
+          {
+            numero: 116,
+            resumen: "Relación con el gobierno estatal.",
+            detalles: "Establece que los estados se organizarán internamente, y los municipios son una parte fundamental de su estructura."
+          },
+          {
+            numero: 117,
+            resumen: "Prohibiciones municipales.",
+            detalles: "Los municipios no podrán establecer aduanas locales ni impedir el libre tránsito de bienes y personas."
+          },
+          {
+            numero: 118,
+            resumen: "Más prohibiciones sobre autoridad local.",
+            detalles: "Restringe las funciones de los municipios en términos de acuerdos internacionales o armamento militar."
+          },
+          {
+            numero: 124,
+            resumen: "Facultades reservadas a los municipios.",
+            detalles: "Las facultades que no estén expresamente concedidas por la Constitución a los funcionarios federales, se entienden reservadas a los estados y sus municipios."
+          }
+        ]
+      };
+    
+      // Cargar los artículos correspondientes
+      if (datos[seccion]) {
+        datos[seccion].forEach(articulo => {
+          html += `
+            <div class="card">
+              <h3>Artículo ${articulo.numero}</h3>
+              <p><strong>Resumen:</strong> ${articulo.resumen}</p>
+              <p><strong>Detalles:</strong> ${articulo.detalles}</p>
+            </div>
+          `;
+        });
+      } else {
+        html += `<p>No hay artículos disponibles para esta sección.</p>`;
+      }
+    
+      content.innerHTML = html;
+    }
+    </script>
 
 </body>
 </html>
