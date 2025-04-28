@@ -1,289 +1,234 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Constitución Mexicana</title>
-    
-    <!-- Three.js -->
-    <script src="https://cdn.jsdelivr.net/npm/three@0.152.0/build/three.min.js"></script>
+  <meta charset="UTF-8">
+  <title>Artículos Constitucionales</title>
+  <style>
+    /* Estilos generales */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body, html {
+      width: 100%;
+      height: 100%;
+      font-family: 'Segoe UI', sans-serif;
+      overflow: hidden;
+      background: linear-gradient(#4d0e0e, #8b1e1e); /* Rojo oscuro degradado */
+      color: #fff;
+    }
 
-    <!-- Bootstrap Icons -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    /* Fondo Three.js */
+    #threejs-background {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+    }
 
-    <style>
-        body {
-            margin: 0;
-            font-family: 'Segoe UI', sans-serif;
-            background-color: #f8f9fa;
-            overflow-x: hidden;
-        }
-        canvas { display: block; }
+    /* Contenido */
+    #app {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      height: 100%;
+    }
 
-        /* Menú lateral */
-        #sidebar {
-            position: fixed;
-            top: 0;
-            left: -250px;
-            width: 250px;
-            height: 100%;
-            background-color: #7b1f1f; /* Rojo oscuro */
-            color: white;
-            transition: left 0.3s ease;
-            padding: 20px;
-            z-index: 1000;
-        }
-        #sidebar.active {
-            left: 0;
-        }
-        #sidebar h2 {
-            text-align: center;
-            margin-bottom: 30px;
-            color: gold;
-        }
-        #sidebar a {
-            display: block;
-            color: white;
-            text-decoration: none;
-            margin: 15px 0;
-            font-size: 18px;
-            transition: all 0.3s;
-        }
-        #sidebar a:hover {
-            color: gold;
-            transform: translateX(10px);
-        }
+    /* Menú lateral */
+    #sidebar {
+      width: 250px;
+      background-color: #660000;
+      padding: 20px;
+      transition: transform 0.3s ease;
+      box-shadow: 3px 0 10px rgba(0,0,0,0.5);
+    }
+    #sidebar.hidden {
+      transform: translateX(-100%);
+    }
 
-        /* Botón de menú */
-        #menu-btn {
-            position: fixed;
-            top: 20px;
-            left: 20px;
-            font-size: 30px;
-            background-color: #7b1f1f;
-            color: white;
-            border: none;
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            cursor: pointer;
-            z-index: 1001;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.4);
-            transition: background 0.3s;
-        }
-        #menu-btn:hover {
-            background-color: gold;
-            color: #7b1f1f;
-        }
+    #sidebar h2 {
+      color: #FFD700; /* Dorado */
+      margin-bottom: 20px;
+    }
 
-        /* Contenido principal */
-        #content {
-            margin-left: 0;
-            padding: 80px 20px 20px 20px;
-            transition: margin-left 0.3s ease;
-        }
-        #sidebar.active ~ #content {
-            margin-left: 250px;
-        }
+    #sidebar ul {
+      list-style: none;
+    }
 
-        /* Títulos */
-        .section-title {
-            font-size: 32px;
-            margin: 20px 0;
-            color: #7b1f1f;
-            border-bottom: 3px solid gold;
-            display: inline-block;
-        }
+    #sidebar ul li {
+      margin: 15px 0;
+      cursor: pointer;
+      transition: color 0.3s;
+    }
 
-        /* Tarjetas */
-        .card {
-            background: white;
-            padding: 20px;
-            margin: 15px;
-            border-radius: 15px;
-            box-shadow: 0 6px 12px rgba(0,0,0,0.1);
-            transition: transform 0.3s, box-shadow 0.3s;
-        }
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 12px 20px rgba(0,0,0,0.2);
-        }
-        .cards-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 20px;
-        }
+    #sidebar ul li:hover {
+      color: #FFD700;
+    }
 
-        /* Botón flotante */
-        #top-btn {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            font-size: 24px;
-            background-color: gold;
-            color: #7b1f1f;
-            border: none;
-            border-radius: 50%;
-            width: 60px;
-            height: 60px;
-            cursor: pointer;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.4);
-            z-index: 1001;
-            transition: background 0.3s;
-        }
-        #top-btn:hover {
-            background-color: #7b1f1f;
-            color: gold;
-        }
+    /* Botón para abrir/cerrar menú */
+    #menu-toggle {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      background-color: #FFD700;
+      color: #660000;
+      border: none;
+      border-radius: 5px;
+      padding: 10px 15px;
+      cursor: pointer;
+      z-index: 2;
+      transition: background-color 0.3s;
+    }
+    #menu-toggle:hover {
+      background-color: #e6c200;
+    }
 
-        /* Encabezado bandera */
-        #banner {
-            position: absolute;
-            top: 20px;
-            width: 100%;
-            text-align: center;
-            color: gold;
-            font-size: 40px;
-            font-weight: bold;
-            text-shadow: 2px 2px 4px black;
-            z-index: 0;
-        }
-    </style>
+    /* Contenido principal */
+    #content {
+      flex: 1;
+      padding: 40px;
+      overflow-y: auto;
+      backdrop-filter: blur(5px);
+    }
+
+    /* Tarjetas de artículos */
+    .card {
+      background-color: rgba(255,255,255,0.1);
+      padding: 20px;
+      border-radius: 15px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+      transition: transform 0.3s;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      background-color: rgba(255,255,255,0.2);
+    }
+
+    .card h3 {
+      color: #FFD700;
+      margin-bottom: 10px;
+    }
+
+    .card p {
+      color: #ffeaea;
+    }
+
+    /* Botón flotante para volver arriba */
+    #top-button {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      background-color: #FFD700;
+      color: #660000;
+      padding: 12px 16px;
+      border: none;
+      border-radius: 50%;
+      font-size: 20px;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+      z-index: 3;
+      transition: background-color 0.3s;
+    }
+
+    #top-button:hover {
+      background-color: #e6c200;
+    }
+  </style>
 </head>
 <body>
 
-<!-- Menú lateral -->
-<div id="sidebar">
+<!-- Fondo de Three.js -->
+<div id="threejs-background"></div>
+
+<!-- Botón de menú -->
+<button id="menu-toggle">☰</button>
+
+<!-- Contenido principal -->
+<div id="app">
+  <nav id="sidebar">
     <h2>Secciones</h2>
-    <a href="#federal"><i class="bi bi-building"></i> Federal</a>
-    <a href="#estatal"><i class="bi bi-flag"></i> Estatal</a>
-    <a href="#municipal"><i class="bi bi-geo-alt"></i> Municipal</a>
+    <ul>
+      <li onclick="mostrar('federal')">Federal (Presidente)</li>
+      <li onclick="mostrar('estatal')">Estatal (Gobernador)</li>
+      <li onclick="mostrar('municipal')">Municipal (Ayuntamiento)</li>
+    </ul>
+  </nav>
+
+  <div id="content">
+    <h1>Bienvenido</h1>
+    <p>Selecciona una sección para visualizar artículos constitucionales.</p>
+  </div>
 </div>
 
-<!-- Botón menú -->
-<button id="menu-btn"><i class="bi bi-list"></i></button>
+<!-- Botón para volver arriba -->
+<button id="top-button" onclick="window.scrollTo({top:0, behavior:'smooth'})">↑</button>
 
-<!-- Botón volver arriba -->
-<button id="top-btn"><i class="bi bi-arrow-up"></i></button>
+<!-- Three.js -->
+<script type="module">
+import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.160.2/build/three.module.js';
 
-<!-- Encabezado -->
-<div id="banner">Constitución de los Estados Unidos Mexicanos</div>
+let scene, camera, renderer;
 
-<!-- Contenido -->
-<div id="content">
-    <section id="federal">
-        <h2 class="section-title">Federal</h2>
-        <div class="cards-container" id="federal-cards"></div>
-    </section>
+function initThreeJS() {
+  scene = new THREE.Scene();
+  camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+  renderer = new THREE.WebGLRenderer({ alpha: true });
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  document.getElementById('threejs-background').appendChild(renderer.domElement);
 
-    <section id="estatal">
-        <h2 class="section-title">Estatal</h2>
-        <div class="cards-container" id="estatal-cards"></div>
-    </section>
+  const loader = new THREE.TextureLoader();
+  loader.load('https://upload.wikimedia.org/wikipedia/commons/f/fc/Flag_of_Mexico.svg', function(texture){
+    const geometry = new THREE.PlaneGeometry(20, 12);
+    const material = new THREE.MeshBasicMaterial({ map: texture, transparent: true });
+    const flag = new THREE.Mesh(geometry, material);
+    scene.add(flag);
+  });
 
-    <section id="municipal">
-        <h2 class="section-title">Municipal</h2>
-        <div class="cards-container" id="municipal-cards"></div>
-    </section>
-</div>
+  camera.position.z = 15;
 
-<!-- Bandera 3D Three.js -->
-<script>
-    const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
-    camera.position.z = 15;
+  function animate() {
+    requestAnimationFrame(animate);
+    scene.rotation.z += 0.0008;
+    renderer.render(scene, camera);
+  }
+  animate();
+}
 
-    const renderer = new THREE.WebGLRenderer({ alpha: true });
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.setClearColor(new THREE.Color(0.0039, 0.1216, 0.0549), 1);
-    document.body.appendChild(renderer.domElement);
+initThreeJS();
 
-    const textureLoader = new THREE.TextureLoader();
-    textureLoader.load("images/m.png", (texture) => {
-        const geometry = new THREE.PlaneGeometry(32, 15, 64, 32);
-        const material = new THREE.MeshBasicMaterial({ map: texture, side: THREE.DoubleSide, transparent: true });
-        const flag = new THREE.Mesh(geometry, material);
-
-        flag.rotation.y = -Math.PI/8;
-        flag.position.set(8, 6, 0);
-        scene.add(flag);
-
-        function animate() {
-            requestAnimationFrame(animate);
-            const time = Date.now() * 0.002;
-            const positionAttribute = geometry.attributes.position;
-            for (let i = 0; i < positionAttribute.count; i++) {
-                const x = positionAttribute.getX(i);
-                const y = positionAttribute.getY(i);
-                const z = Math.sin((time + x * 0.5) * 2) * 0.4 + Math.sin((time + y * 0.5) * 2) * 0.4;
-                positionAttribute.setZ(i, z);
-            }
-            positionAttribute.needsUpdate = true;
-            renderer.render(scene, camera);
-        }
-        animate();
-    });
-
-    window.addEventListener('resize', () => {
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        camera.aspect = window.innerWidth / window.innerHeight;
-        camera.updateProjectionMatrix();
-    });
+window.addEventListener('resize', () => {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+});
 </script>
 
-<!-- JavaScript funcionalidades -->
+<!-- JavaScript para menú y contenido -->
 <script>
-    // Menú desplegable
-    const menuBtn = document.getElementById('menu-btn');
-    const sidebar = document.getElementById('sidebar');
-    const content = document.getElementById('content');
-    menuBtn.addEventListener('click', () => {
-        sidebar.classList.toggle('active');
-        content.classList.toggle('active');
-    });
+const sidebar = document.getElementById('sidebar');
+const menuToggle = document.getElementById('menu-toggle');
+const content = document.getElementById('content');
 
-    // Botón volver arriba
-    const topBtn = document.getElementById('top-btn');
-    topBtn.addEventListener('click', () => {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    });
+menuToggle.addEventListener('click', () => {
+  sidebar.classList.toggle('hidden');
+});
 
-    // Cargar artículos
-    const federal = [
-        "Artículo 1: Igualdad ante la ley.",
-        "Artículo 2: Derechos de los pueblos indígenas.",
-        "Artículo 3: Derecho a la educación.",
-        "Artículo 4: Igualdad entre mujeres y hombres.",
-        "Artículo 6: Libertad de expresión."
-    ];
-    const estatal = [
-        "Artículo 11: Libertad de tránsito.",
-        "Artículo 14: Garantía de audiencia.",
-        "Artículo 16: Legalidad en detenciones.",
-        "Artículo 17: Acceso a la justicia.",
-        "Artículo 18: Sistema penitenciario."
-    ];
-    const municipal = [
-        "Artículo 115: Organización municipal.",
-        "Artículo 116: Facultades de estados.",
-        "Artículo 117: Prohibiciones estatales.",
-        "Artículo 118: Facultades exclusivas federales.",
-        "Artículo 119: Relaciones entre estados."
-    ];
+function mostrar(seccion) {
+  let html = `<h1>${seccion.charAt(0).toUpperCase() + seccion.slice(1)}</h1>`;
 
-    const loadArticles = (containerId, articles) => {
-        const container = document.getElementById(containerId);
-        articles.forEach(article => {
-            const card = document.createElement('div');
-            card.className = 'card';
-            card.innerHTML = `<i class="bi bi-file-earmark-text" style="font-size:30px; color:gold;"></i><br><br>${article}`;
-            container.appendChild(card);
-        });
-    };
-
-    loadArticles('federal-cards', federal);
-    loadArticles('estatal-cards', estatal);
-    loadArticles('municipal-cards', municipal);
+  for (let i = 1; i <= 5; i++) {
+    html += `
+    <div class="card">
+      <h3>Artículo ${i}</h3>
+      <p><strong>Resumen:</strong> Breve descripción del artículo ${i} perteneciente a la sección ${seccion}.</p>
+      <p><strong>Detalles:</strong> Este artículo establece principios fundamentales que rigen la organización del ${seccion}. Incluye derechos, obligaciones y procedimientos específicos para su correcta aplicación.</p>
+    </div>`;
+  }
+  content.innerHTML = html;
+}
 </script>
 
 </body>
