@@ -180,22 +180,51 @@ function initThreeJS() {
   renderer.setSize(window.innerWidth, window.innerHeight);
   document.getElementById('threejs-background').appendChild(renderer.domElement);
 
-  const loader = new THREE.TextureLoader();
-  loader.load('images/m.png', function(texture){
-    const geometry = new THREE.PlaneGeometry(20, 12);
-    const material = new THREE.MeshBasicMaterial({ map: texture, transparent: true });
-    const flag = new THREE.Mesh(geometry, material);
-    scene.add(flag);
-  });
+  const textureLoader = new THREE.TextureLoader();
+        textureLoader.load("images/m.png", (texture) => {
+            // Crear la geometría y el material para la bandera
+            const width = 32; // Doble ancho de la bandera
+            const height = 15; // Doble altura de la bandera
+            const geometry = new THREE.PlaneGeometry(width, height, 64, 32); // Mayor tamaño y más segmentos
+            const material = new THREE.MeshBasicMaterial({ 
+                map: texture, 
+                side: THREE.DoubleSide, 
+                transparent: true 
+            });
+            const flag = new THREE.Mesh(geometry, material);
 
-  camera.position.z = 15;
+            // Aplicar rotación a la bandera
+            flag.rotation.y = -Math.PI / 8; // Rotar -22.5 grados (PI/8 radianes) hacia la derecha
 
-  function animate() {
-    requestAnimationFrame(animate);
-    scene.rotation.z += 0.0008;
-    renderer.render(scene, camera);
-  }
-  animate();
+            // Posicionar la bandera en la esquina superior derecha
+            flag.position.set(8, 6, 0); // Ajustar las coordenadas para la nueva escala
+
+            scene.add(flag);
+
+        
+
+            // Función de animación
+            function animate() {
+                requestAnimationFrame(animate);
+
+                // Animar ondeo de la bandera
+                const time = Date.now() * 0.002;
+                const positionAttribute = geometry.attributes.position;
+                for (let i = 0; i < positionAttribute.count; i++) {
+                    const x = positionAttribute.getX(i);
+                    const y = positionAttribute.getY(i);
+                    const z = Math.sin((time + x * 0.5) * 2) * 0.4 + Math.sin((time + y * 0.5) * 2) * 0.4;
+                    positionAttribute.setZ(i, z);
+                }
+                positionAttribute.needsUpdate = true;
+
+                // Renderizar la escena
+                renderer.render(scene, camera);
+            }
+
+            // Iniciar la animación
+            animate();
+        });
 }
 
 initThreeJS();
